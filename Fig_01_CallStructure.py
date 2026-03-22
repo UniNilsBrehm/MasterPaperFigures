@@ -42,7 +42,7 @@ def scale_bar(axis, y_pos, length, unit, time_max, dy_text):
     axis.text(time_max - length_bar / 2, y_pos - dy_text, f'{length} {unit}', ha='center', va='center', **styles.txtScalebar)
 
 
-def annotate_label(ax, start, end, label):
+def annotate_label(ax, start, end, label, pos="below"):
     """
     Draws a rectangle from start to end coordinates, with a label below it centered.
 
@@ -73,7 +73,11 @@ def annotate_label(ax, start, end, label):
 
     # Place the label below the rectangle, centered horizontally
     text_x = lower_left_x + width / 2
-    text_y = lower_left_y - 1.5 * height  # slightly below
+    if pos == 'below':
+        text_y = lower_left_y - 1.5 * height  # slightly below
+    else:
+        text_y = y1 * 1.3  # slightly above
+
     ax.text(
         text_x,
         text_y,
@@ -196,6 +200,11 @@ def main():
     min_y = np.min(call_audio[1])
     annotate_label(ax['active_train'], start=(1.0079, min_y), end=(1.0085, min_y + bar_size), label="pulse duration")
 
+    min_y = np.max(call_audio[1]) * 1.1
+    annotate_label(ax['call'], start=(1.0079, min_y), end=(1.0193, min_y + bar_size/2), label="Active train", pos='above')
+    annotate_label(ax['call'], start=(1.0251, min_y), end=(1.0358, min_y + bar_size/2), label="Passive train", pos='above')
+
+    min_y = np.min(call_audio[1])
     min_y = min_y + np.max(call_audio[1]) * 0.1
     annotate_label(ax['call'], start=(1.0193, min_y), end=(1.0251, min_y + bar_size), label="ITI")
     annotate_label(ax['call'], start=(1.0335, min_y), end=(1.0345, min_y + bar_size), label="IPI")
